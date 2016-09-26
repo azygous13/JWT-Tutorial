@@ -21,17 +21,16 @@ func main() {
 }
 
 func generateJwt(c *gin.Context) {
-    token := jwt.New(jwt.SigningMethodHS256)
-
-    token.Claims["iss"] = "www.host-that-issue-jwt.com"
-    token.Claims["aud"] = "tenant/client_id"
-    token.Claims["sub"] = "user-id"
-    token.Claims["jti"] = "unique-string"
-    token.Claims["iat"] = time.Now().Unix()
-    token.Claims["nbf"] = time.Now().Add(time.Second * 10).Unix()
-    token.Claims["exp"] = time.Now().Add(time.Second * 30).Unix()
-
-    token.Claims["author"] = "Teerapong Chantakard"
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+        "iss": "www.host-that-issue-jwt.com",
+        "aud": "tenant/client_id",
+        "sub":"user-id",
+        "jti":"unique-string",
+        "iat": time.Now().Unix(),
+        "nbf": time.Now().Add(time.Second * 10).Unix(),
+        "exp": time.Now().Add(time.Second * 30).Unix(),
+        "author": "Teerapong Chantakard",
+    })
 
     if tokenString, err := token.SignedString([]byte(SecretKey)); err != nil {
 		c.String(http.StatusOK, err.Error())
